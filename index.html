@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Komut El Kitabı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; }
+body { background-color: #0a0a0f; color: #e5e7eb; transition: background-color 0.3s, color 0.3s; overflow-x: hidden; position: relative; }
+body.theme-light { background-color: #f5f3ff; color: #1e1b4b; }
+h1, h2, h3, h4, h5, h6 { font-family: 'Syne', sans-serif; }
+code, pre { font-family: 'JetBrains Mono', monospace; }
+#bg-mesh { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 15% 50%, rgba(124, 58, 237, 0.08), transparent 25%), radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08), transparent 25%); animation: mesh 20s infinite alternate; }
+body.theme-light #bg-mesh { background: radial-gradient(circle at 15% 50%, rgba(124, 58, 237, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 25%); }
+@keyframes mesh { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+#progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: linear-gradient(90deg, #7c3aed, #a855f7); z-index: 1000; transition: width 0.1s; }
+nav { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(10, 10, 15, 0.7); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(124, 58, 237, 0.2); z-index: 100; transition: all 0.3s; }
+body.theme-light nav { background: rgba(245, 243, 255, 0.7); border-bottom: 1px solid rgba(124, 58, 237, 0.1); }
+.nav-brand { font-size: 1.5rem; font-weight: 800; color: #a855f7; display: flex; align-items: center; gap: 0.5rem; font-family: 'Syne', sans-serif; }
+.nav-actions { display: flex; align-items: center; gap: 1rem; }
+button { background: none; border: none; cursor: pointer; color: inherit; transition: all 0.2s; font-family: inherit; }
+.btn-icon { padding: 0.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; background: rgba(124, 58, 237, 0.1); }
+.btn-icon:hover { background: rgba(124, 58, 237, 0.2); }
+.search-container { position: relative; }
+#search-input { padding: 0.5rem 1rem 0.5rem 2.5rem; border-radius: 0.5rem; border: 1px solid rgba(124, 58, 237, 0.3); background: rgba(10, 10, 15, 0.5); color: #fff; width: 250px; outline: none; transition: all 0.2s; font-family: inherit; }
+body.theme-light #search-input { background: rgba(255, 255, 255, 0.5); color: #000; }
+#search-input:focus { border-color: #a855f7; box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2); width: 300px; }
+.search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); opacity: 0.5; }
+main { display: flex; max-width: 1400px; margin: 0 auto; padding: 2rem; gap: 2rem; min-height: 80vh; }
+aside { width: 250px; flex-shrink: 0; }
+.category-list { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 0.5rem; }
+.category-btn { text-align: left; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+.category-btn:hover, .category-btn.active { background: rgba(124, 58, 237, 0.1); color: #a855f7; }
+.badge { background: rgba(124, 58, 237, 0.2); padding: 0.1rem 0.4rem; border-radius: 1rem; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+.content { flex-grow: 1; }
+.category-section { margin-bottom: 4rem; scroll-margin-top: 100px; }
+.category-title { font-size: 2rem; margin-bottom: 1.5rem; color: #a855f7; border-bottom: 1px solid rgba(124, 58, 237, 0.2); padding-bottom: 0.5rem; font-family: 'Syne', sans-serif;}
+.commands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 1.5rem; }
+.command-card { background: rgba(30, 27, 75, 0.4); border: 1px solid rgba(124, 58, 237, 0.1); border-radius: 1rem; padding: 1.5rem; backdrop-filter: blur(10px); transition: all 0.3s; opacity: 0; transform: translateY(20px); display: flex; flex-direction: column; gap: 1rem; }
+body.theme-light .command-card { background: rgba(255, 255, 255, 0.6); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+.command-card.visible { opacity: 1; transform: translateY(0); }
+.command-card:hover { border-color: #a855f7; box-shadow: 0 0 15px rgba(124, 58, 237, 0.15); transform: translateY(-2px); }
+.cmd-header { display: flex; align-items: baseline; gap: 1rem; }
+.cmd-name { font-size: 1.25rem; color: #a855f7; background: rgba(124, 58, 237, 0.1); padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-family: 'JetBrains Mono', monospace;}
+.cmd-desc { font-size: 0.95rem; opacity: 0.9; flex-grow: 1;}
+.cmd-section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.5; margin-bottom: 0.5rem; font-weight: 700; }
+.code-block { background: rgba(0, 0, 0, 0.5); padding: 1rem; border-radius: 0.5rem; position: relative; border: 1px solid rgba(255,255,255,0.05); }
+body.theme-light .code-block { background: #1e1b4b; color: #e5e7eb; border: none; }
+.code-block pre { overflow-x: auto; font-size: 0.85rem; padding-right: 2.5rem; color: #fff; }
+body.theme-light .code-block pre { color: #fff; }
+.copy-btn { position: absolute; right: 0.5rem; top: 0.5rem; background: rgba(255,255,255,0.1); padding: 0.25rem; border-radius: 0.25rem; opacity: 0; transition: opacity 0.2s; color: #fff; }
+.code-block:hover .copy-btn { opacity: 1; }
+.copy-btn:hover { background: rgba(255,255,255,0.2); }
+.ex-list { display: flex; flex-direction: column; gap: 1rem; }
+.ex-item-desc { font-size: 0.85rem; margin-bottom: 0.25rem; opacity: 0.8; }
+.ex-item .code-block { padding: 0.75rem; }
+.ex-item .code-block pre { font-size: 0.85rem; color: #a855f7; }
+#no-results { display: none; text-align: center; padding: 4rem; font-size: 1.5rem; opacity: 0.5; grid-column: 1 / -1; font-family: 'Syne', sans-serif;}
+#scroll-top { position: fixed; bottom: 2rem; right: 2rem; background: #a855f7; color: #fff; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4); opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 100; }
+#scroll-top.visible { opacity: 1; pointer-events: auto; }
+#scroll-top:hover { transform: translateY(-5px); background: #9333ea; }
+.highlight { background: rgba(168, 85, 247, 0.4); color: inherit; padding: 0 0.2rem; border-radius: 0.2rem; }
+.footer-banner { margin-top: 4rem; padding: 2rem; text-align: center; background: linear-gradient(to right, rgba(30, 27, 75, 0.8), rgba(10, 10, 15, 0.8)); border-top: 1px solid rgba(124, 58, 237, 0.2); backdrop-filter: blur(10px); }
+body.theme-light .footer-banner { background: linear-gradient(to right, rgba(245, 243, 255, 0.8), #fff); }
+.credit-link { display: inline-flex; align-items: center; gap: 0.5rem; color: #a855f7; text-decoration: none; font-weight: 700; font-size: 1.2rem; padding: 1rem 2rem; border-radius: 2rem; background: rgba(124, 58, 237, 0.1); transition: all 0.3s; font-family: 'Syne', sans-serif;}
+.credit-link:hover { background: #a855f7; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); }
+.credit-card { text-align: center; padding: 3rem; background: rgba(30, 27, 75, 0.2); border-radius: 1rem; border: 1px solid rgba(124, 58, 237, 0.2); margin-top: 4rem; backdrop-filter: blur(10px); }
+body.theme-light .credit-card { background: rgba(255, 255, 255, 0.6); }
+.credit-card h2 { margin-bottom: 1.5rem; color: #a855f7; font-size: 2rem; }
+@media (max-width: 1024px) { main { flex-direction: column; } aside { width: 100%; } .category-list { position: static; flex-direction: row; flex-wrap: wrap; } .category-btn { flex-basis: calc(50% - 0.5rem); } .commands-grid { grid-template-columns: 1fr; } #search-input { width: 200px; } #search-input:focus { width: 250px; } }
+@media (max-width: 768px) { nav { flex-direction: column; gap: 1rem; padding: 1rem; } .nav-actions { width: 100%; justify-content: space-between; flex-wrap: wrap; } .search-container { flex-grow: 1; margin-right: 0; width: 100%; order: 3; } #search-input { width: 100%; } #search-input:focus { width: 100%; } .category-btn { flex-basis: 100%; } }
+</style>
+</head>
+<body class="theme-dark">
+    <div id="bg-mesh"></div>
+    <div id="progress-bar"></div>
+    <nav>
+        <div class="nav-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 4-9 4-9-4 9-4z"></path><path d="M12 22l9-4-9-4-9 4 9 4z"></path><path d="M2 12l9 4 9-4"></path></svg>
+            <span id="app-title">Linux Komut El Kitabı</span>
+        </div>
+        <div class="nav-actions">
+            <div class="search-container">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="search-input" placeholder="Komut ara... (Ctrl+K)" aria-label="Search">
+            </div>
+            <button id="lang-toggle" class="btn-icon">
+                <span id="lang-text" style="font-weight: 700; font-family: 'JetBrains Mono', monospace;">TR</span>
+            </button>
+            <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme">
+                <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+        </div>
+    </nav>
+    <main>
+        <aside>
+            <div id="category-list" class="category-list"></div>
+        </aside>
+        <div class="content">
+            <div id="no-results">Sonuç bulunamadı</div>
+            <div id="main-content"></div>
+            
+            <section class="credit-card" id="about-section">
+                <h2 id="about-title" style="font-family: 'Syne', sans-serif;">Hakkında</h2>
+                <a href="https://www.linkedin.com/in/arda-mecik/" target="_blank" rel="noopener noreferrer" class="credit-link">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    <span id="about-text">💜 ile geliştirildi, Arda Meçik</span>
+                </a>
+            </section>
+        </div>
+    </main>
+    <footer class="footer-banner">
+        <a href="https://www.linkedin.com/in/arda-mecik/" target="_blank" rel="noopener noreferrer" class="credit-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <span id="footer-text">💜 ile geliştirildi, Arda Meçik</span>
+        </a>
+    </footer>
+    <button id="scroll-top" aria-label="Scroll to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+    </button>
+    <script>
+const db = [{"cat":"fileSystem","cmds":[{"name":"ls","tr":"Dizin içeriklerini listeler.","en":"List directory contents.","syntax":"ls [OPTION]... [FILE]...","ex":[{"c":"ls -la","tr":"Gizli dosyalar dahil tümünü listele","en":"List all including hidden files"},{"c":"ls -lh","tr":"Boyutları okunabilir formatta göster","en":"Show sizes in human-readable format"}]},{"name":"cd","tr":"Geçerli dizini değiştirir.","en":"Change the current directory.","syntax":"cd [DIRECTORY]","ex":[{"c":"cd /var/www","tr":"Belirtilen dizine git","en":"Go to specified directory"},{"c":"cd ..","tr":"Bir üst dizine git","en":"Go to parent directory"}]},{"name":"pwd","tr":"Geçerli çalışma dizinini yazdırır.","en":"Print current working directory.","syntax":"pwd [OPTION]...","ex":[{"c":"pwd","tr":"Mevcut dizin yolunu göster","en":"Show current directory path"}]},{"name":"mkdir","tr":"Yeni dizin oluşturur.","en":"Make directories.","syntax":"mkdir [OPTION]... DIRECTORY...","ex":[{"c":"mkdir myfolder","tr":"Yeni klasör oluştur","en":"Create new folder"},{"c":"mkdir -p path/to/folder","tr":"Gerekirse üst dizinleri de oluştur","en":"Create parent directories as needed"}]},{"name":"rm","tr":"Dosya veya dizinleri siler.","en":"Remove files or directories.","syntax":"rm [OPTION]... [FILE]...","ex":[{"c":"rm file.txt","tr":"Dosyayı sil","en":"Delete file"},{"c":"rm -rf folder","tr":"Klasörü ve içindekileri zorla sil","en":"Force remove directory and contents"}]},{"name":"cp","tr":"Dosya ve dizinleri kopyalar.","en":"Copy files and directories.","syntax":"cp [OPTION]... SOURCE DEST","ex":[{"c":"cp file1.txt file2.txt","tr":"Dosyayı kopyala","en":"Copy file"},{"c":"cp -r dir1 dir2","tr":"Dizini yinelemeli kopyala","en":"Copy directory recursively"}]},{"name":"mv","tr":"Dosya taşır veya yeniden adlandırır.","en":"Move or rename files.","syntax":"mv [OPTION]... SOURCE DEST","ex":[{"c":"mv old.txt new.txt","tr":"Dosyayı yeniden adlandır","en":"Rename file"},{"c":"mv file.txt /tmp/","tr":"Dosyayı taşı","en":"Move file"}]},{"name":"find","tr":"Dizin hiyerarşisinde dosya arar.","en":"Search for files in a directory hierarchy.","syntax":"find [path] [expression]","ex":[{"c":"find . -name '*.log'","tr":".log uzantılı dosyaları bul","en":"Find files with .log extension"},{"c":"find / -size +1G","tr":"1GB'tan büyük dosyaları bul","en":"Find files larger than 1GB"}]},{"name":"locate","tr":"İsimle dosya bulur (veritabanı kullanır).","en":"Find files by name (uses database).","syntax":"locate [OPTION]... PATTERN...","ex":[{"c":"locate nginx.conf","tr":"Dosyanın konumunu hızlıca bul","en":"Quickly find file location"}]},{"name":"touch","tr":"Dosya zaman damgalarını değiştirir veya boş dosya oluşturur.","en":"Change file timestamps or create empty file.","syntax":"touch [OPTION]... FILE...","ex":[{"c":"touch newfile.txt","tr":"Boş dosya oluştur","en":"Create empty file"}]},{"name":"ln","tr":"Dosyalar arasında bağlantı oluşturur.","en":"Make links between files.","syntax":"ln [OPTION]... TARGET LINK_NAME","ex":[{"c":"ln -s /path/target linkname","tr":"Sembolik bağlantı oluştur","en":"Create symbolic link"}]},{"name":"chmod","tr":"Dosya erişim izinlerini değiştirir.","en":"Change file mode bits.","syntax":"chmod [OPTION]... MODE[,MODE]... FILE...","ex":[{"c":"chmod 755 script.sh","tr":"Çalıştırma izni ver","en":"Grant execute permission"}]},{"name":"chown","tr":"Dosya sahibi ve grubunu değiştirir.","en":"Change file owner and group.","syntax":"chown [OPTION]... [OWNER][:[GROUP]] FILE...","ex":[{"c":"chown user:group file.txt","tr":"Sahibi ve grubu değiştir","en":"Change owner and group"}]},{"name":"df","tr":"Dosya sistemi disk alanı kullanımını raporlar.","en":"Report file system disk space usage.","syntax":"df [OPTION]... [FILE]...","ex":[{"c":"df -h","tr":"Disk kullanımını insan okunabilir göster","en":"Show disk usage in human readable format"}]},{"name":"du","tr":"Dosya alanı kullanımını tahmin eder.","en":"Estimate file space usage.","syntax":"du [OPTION]... [FILE]...","ex":[{"c":"du -sh folder/","tr":"Klasörün toplam boyutunu göster","en":"Show total size of folder"}]},{"name":"mount","tr":"Dosya sistemini bağlar.","en":"Mount a file system.","syntax":"mount -t type device dir","ex":[{"c":"mount /dev/sdb1 /mnt/usb","tr":"USB belleği bağla","en":"Mount USB drive"}]},{"name":"umount","tr":"Dosya sistemini ayırır.","en":"Unmount file systems.","syntax":"umount dir","ex":[{"c":"umount /mnt/usb","tr":"Bağlı cihazı ayır","en":"Unmount mounted device"}]},{"name":"chattr","tr":"Bir Linux dosya sistemindeki dosya özniteliklerini değiştirir.","en":"Change file attributes on a Linux file system.","syntax":"chattr [ -RVf ] [ -v version ] [ mode ] files...","ex":[{"c":"chattr +i file.txt","tr":"Dosyayı değiştirilemez yap","en":"Make file immutable"}]},{"name":"lsattr","tr":"Dosya özniteliklerini listeler.","en":"List file attributes on a Linux second extended file system.","syntax":"lsattr [ -RVadv ] [ files...  ]","ex":[{"c":"lsattr file.txt","tr":"Dosya özniteliklerini göster","en":"Show file attributes"}]},{"name":"stat","tr":"Dosya veya dosya sistemi durumunu görüntüler.","en":"Display file or file system status.","syntax":"stat [OPTION]... FILE...","ex":[{"c":"stat file.txt","tr":"Dosya detaylarını göster","en":"Show file details"}]},{"name":"file","tr":"Dosya türünü belirler.","en":"Determine file type.","syntax":"file [OPTION...] [FILE...]","ex":[{"c":"file document.pdf","tr":"Dosyanın türünü tespit et","en":"Determine type of file"}]},{"name":"tree","tr":"Dizin içeriğini ağaç formatında listeler.","en":"List contents of directories in a tree-like format.","syntax":"tree [options] [directory]","ex":[{"c":"tree -L 2","tr":"Ağacı 2 seviye derinliğinde göster","en":"Show tree 2 levels deep"}]},{"name":"basename","tr":"Dosya adından dizin ve ek kısımları çıkarır.","en":"Strip directory and suffix from filenames.","syntax":"basename NAME [SUFFIX]","ex":[{"c":"basename /usr/bin/sort","tr":"Sadece dosya adını al","en":"Get only filename"}]},{"name":"dirname","tr":"Dosya adından dizin kısmını çıkarır.","en":"Strip last component from file name.","syntax":"dirname [OPTION] NAME...","ex":[{"c":"dirname /usr/bin/sort","tr":"Sadece dizin yolunu al","en":"Get only directory path"}]},{"name":"realpath","tr":"Çözümlenmiş mutlak dosya yolunu yazdırır.","en":"Print the resolved absolute file name.","syntax":"realpath [OPTION]... FILE...","ex":[{"c":"realpath file.txt","tr":"Mutlak yolu göster","en":"Show absolute path"}]},{"name":"shred","tr":"Dosyaları güvenli bir şekilde siler.","en":"Overwrite a file to hide its contents, and optionally delete it.","syntax":"shred [OPTION]... FILE...","ex":[{"c":"shred -u secret.txt","tr":"Dosyayı geri getirilemez şekilde sil","en":"Securely delete file"}]}]},{"cat":"textProcessing","cmds":[{"name":"cat","tr":"Dosyaları birleştirir ve standart çıktıya yazar.","en":"Concatenate files and print on the standard output.","syntax":"cat [OPTION]... [FILE]...","ex":[{"c":"cat file.txt","tr":"Dosya içeriğini göster","en":"Show file content"},{"c":"cat f1.txt f2.txt > f3.txt","tr":"Dosyaları birleştir","en":"Merge files"}]},{"name":"grep","tr":"Metin içinde desen arar.","en":"Print lines that match patterns.","syntax":"grep [OPTION]... PATTERNS [FILE]...","ex":[{"c":"grep 'error' var/log/syslog","tr":"Dosyada error kelimesini ara","en":"Search for error in file"},{"c":"grep -r 'TODO' .","tr":"Dizinde yinelemeli ara","en":"Search recursively in directory"}]},{"name":"sed","tr":"Metin akışlarını filtreler ve dönüştürür.","en":"Stream editor for filtering and transforming text.","syntax":"sed [OPTION]... {script-only-if-no-other-script} [input-file]...","ex":[{"c":"sed 's/old/new/g' file.txt","tr":"Metni değiştir","en":"Replace text"}]},{"name":"awk","tr":"Metin işleme dili.","en":"Pattern scanning and processing language.","syntax":"awk [POSIX or GNU style options] -f prog-file [--] file ...","ex":[{"c":"awk '{print $1}' file.txt","tr":"Her satırın ilk sütununu yazdır","en":"Print first column of each line"}]},{"name":"cut","tr":"Her satırdan bölümleri çıkarır.","en":"Remove sections from each line of files.","syntax":"cut OPTION... [FILE]...","ex":[{"c":"cut -d':' -f1 /etc/passwd","tr":"Dosyadan kullanıcı adlarını çıkar","en":"Extract usernames from file"}]},{"name":"sort","tr":"Metin dosyası satırlarını sıralar.","en":"Sort lines of text files.","syntax":"sort [OPTION]... [FILE]...","ex":[{"c":"sort file.txt","tr":"Satırları alfabetik sırala","en":"Sort lines alphabetically"}]},{"name":"uniq","tr":"Tekrarlanan satırları bildirir veya siler.","en":"Report or omit repeated lines.","syntax":"uniq [OPTION]... [INPUT [OUTPUT]]","ex":[{"c":"sort file.txt | uniq","tr":"Tekrarları kaldır","en":"Remove duplicates"}]},{"name":"wc","tr":"Satır, kelime ve bayt sayısını yazdırır.","en":"Print newline, word, and byte counts.","syntax":"wc [OPTION]... [FILE]...","ex":[{"c":"wc -l file.txt","tr":"Satır sayısını göster","en":"Show line count"}]},{"name":"head","tr":"Dosyaların ilk kısmını çıkarır.","en":"Output the first part of files.","syntax":"head [OPTION]... [FILE]...","ex":[{"c":"head -n 10 file.txt","tr":"İlk 10 satırı göster","en":"Show first 10 lines"}]},{"name":"tail","tr":"Dosyaların son kısmını çıkarır.","en":"Output the last part of files.","syntax":"tail [OPTION]... [FILE]...","ex":[{"c":"tail -f /var/log/syslog","tr":"Dosya sonunu canlı izle","en":"Watch end of file live"}]},{"name":"tr","tr":"Karakterleri çevirir veya siler.","en":"Translate or delete characters.","syntax":"tr [OPTION]... SET1 [SET2]","ex":[{"c":"echo 'hello' | tr 'a-z' 'A-Z'","tr":"Büyük harfe çevir","en":"Convert to uppercase"}]},{"name":"diff","tr":"Dosyaları satır satır karşılaştırır.","en":"Compare files line by line.","syntax":"diff [OPTION]... FILES","ex":[{"c":"diff file1.txt file2.txt","tr":"İki dosya arasındaki farkları bul","en":"Find differences between two files"}]},{"name":"patch","tr":"Bir diff dosyasını orijinaline uygular.","en":"Apply a diff file to an original.","syntax":"patch [options] [originalfile [patchfile]]","ex":[{"c":"patch < fix.diff","tr":"Yamayı uygula","en":"Apply patch"}]},{"name":"paste","tr":"Dosyaların satırlarını birleştirir.","en":"Merge lines of files.","syntax":"paste [OPTION]... [FILE]...","ex":[{"c":"paste file1.txt file2.txt","tr":"Satırları yan yana birleştir","en":"Merge lines side by side"}]},{"name":"join","tr":"Ortak bir alana sahip iki dosyanın satırlarını birleştirir.","en":"Join lines of two files on a common field.","syntax":"join [OPTION]... FILE1 FILE2","ex":[{"c":"join file1.txt file2.txt","tr":"Ortak sütuna göre birleştir","en":"Join by common column"}]},{"name":"nl","tr":"Satır numaralarını ekler.","en":"Number lines of files.","syntax":"nl [OPTION]... [FILE]...","ex":[{"c":"nl file.txt","tr":"Satır numaraları ile yazdır","en":"Print with line numbers"}]},{"name":"zcat","tr":"Sıkıştırılmış dosyaların içeriğini gösterir.","en":"View contents of compressed files.","syntax":"zcat [ -S suffix ] [ name ...  ]","ex":[{"c":"zcat file.gz","tr":"Sıkıştırılmış dosya içeriğini gör","en":"View compressed file content"}]},{"name":"zgrep","tr":"Sıkıştırılmış dosyalarda metin arar.","en":"Search possibly compressed files for a regular expression.","syntax":"zgrep [ grep_options ] [ -e ] pattern filename...","ex":[{"c":"zgrep 'error' log.gz","tr":"Gz dosyasında error kelimesini ara","en":"Search for error in gz file"}]}]},{"cat":"processManagement","cmds":[{"name":"ps","tr":"Mevcut süreçlerin durumunu raporlar.","en":"Report a snapshot of the current processes.","syntax":"ps [options]","ex":[{"c":"ps aux","tr":"Tüm süreçleri listele","en":"List all processes"}]},{"name":"top","tr":"Linux görevlerini görüntüler.","en":"Display Linux tasks.","syntax":"top","ex":[{"c":"top","tr":"Süreçleri canlı izle","en":"Watch processes live"}]},{"name":"htop","tr":"Etkileşimli süreç görüntüleyici.","en":"Interactive process viewer.","syntax":"htop","ex":[{"c":"htop","tr":"Renkli ve interaktif süreç izleyici","en":"Colorful and interactive process viewer"}]},{"name":"kill","tr":"Sürece sinyal gönderir (genellikle sonlandırmak için).","en":"Send a signal to a process (usually to terminate).","syntax":"kill [options] <pid>...","ex":[{"c":"kill -9 1234","tr":"Süreci zorla sonlandır","en":"Force kill process"}]},{"name":"killall","tr":"Süreçleri isimlerine göre sonlandırır.","en":"Kill processes by name.","syntax":"killall [options] name","ex":[{"c":"killall nginx","tr":"Tüm nginx süreçlerini sonlandır","en":"Kill all nginx processes"}]},{"name":"nice","tr":"Bir komutu değiştirilmiş öncelik ile çalıştırır.","en":"Run a command with modified scheduling priority.","syntax":"nice [OPTION] [COMMAND [ARG]...]","ex":[{"c":"nice -n 10 script.sh","tr":"Düşük öncelikle çalıştır","en":"Run with low priority"}]},{"name":"nohup","tr":"Kapanmalara karşı bağışık bir komut çalıştırır.","en":"Run a command immune to hangups.","syntax":"nohup COMMAND [ARG]...","ex":[{"c":"nohup python script.py &","tr":"Arka planda kesintisiz çalıştır","en":"Run in background uninterrupted"}]},{"name":"bg","tr":"Görevleri arka planda çalıştırır.","en":"Put jobs in background.","syntax":"bg [job_spec ...]","ex":[{"c":"bg %1","tr":"Görevi arka plana gönder","en":"Send job to background"}]},{"name":"fg","tr":"Görevleri ön plana getirir.","en":"Put jobs in foreground.","syntax":"fg [job_spec]","ex":[{"c":"fg %1","tr":"Görevi ön plana al","en":"Bring job to foreground"}]},{"name":"jobs","tr":"Aktif görevleri listeler.","en":"List active jobs.","syntax":"jobs [options]","ex":[{"c":"jobs","tr":"Arka plan görevlerini göster","en":"Show background jobs"}]},{"name":"systemctl","tr":"Systemd sistemi ve servis yöneticisini kontrol eder.","en":"Control the systemd system and service manager.","syntax":"systemctl [OPTIONS...] COMMAND [NAME...]","ex":[{"c":"systemctl status sshd","tr":"Servis durumunu kontrol et","en":"Check service status"},{"c":"systemctl restart nginx","tr":"Servisi yeniden başlat","en":"Restart service"}]},{"name":"service","tr":"Sistem servislerini çalıştırır.","en":"Run a System V init script.","syntax":"service SCRIPT COMMAND","ex":[{"c":"service apache2 start","tr":"Servisi başlat","en":"Start service"}]},{"name":"pstree","tr":"Süreçleri ağaç yapısında gösterir.","en":"Display a tree of processes.","syntax":"pstree [ -a ] [ -c ] [ -h ] [ -n ] [ -p ] [ -u ]","ex":[{"c":"pstree -p","tr":"Ağacı PID'leri ile göster","en":"Show tree with PIDs"}]},{"name":"lsof","tr":"Açık dosyaları listeler.","en":"List open files.","syntax":"lsof [ -?abChKlnNOPRtUvVX ] [ -A A ] [ -c c ] [ -+d d ] [ -+D D ]","ex":[{"c":"lsof -i :80","tr":"80 portunu kullanan süreçleri göster","en":"Show processes using port 80"}]},{"name":"strace","tr":"Sistem çağrılarını ve sinyallerini izler.","en":"Trace system calls and signals.","syntax":"strace [ -dffhiqrtttTvxx ] [ -a column ] [ -e expr ] ... [ -p pid ] ...","ex":[{"c":"strace -p 1234","tr":"1234 PID'li sürecin sistem çağrılarını izle","en":"Trace system calls of PID 1234"}]},{"name":"pidof","tr":"Çalışan bir programın süreç kimliğini (PID) bulur.","en":"Find the process ID of a running program.","syntax":"pidof [ -s ] [ -c ] [ -n ] [ -x ] [ -o omitpid ] [ -o omitpid..  ]  program","ex":[{"c":"pidof nginx","tr":"Nginx süreç kimliğini bul","en":"Find PID of nginx"}]},{"name":"pgrep","tr":"İsme göre süreçleri arar.","en":"Look up processes based on name and other attributes.","syntax":"pgrep [options] pattern","ex":[{"c":"pgrep -u root sshd","tr":"Root kullanıcısına ait sshd süreçlerini bul","en":"Find sshd processes of root user"}]},{"name":"pkill","tr":"İsme göre süreçlere sinyal gönderir.","en":"Signal processes based on name and other attributes.","syntax":"pkill [options] pattern","ex":[{"c":"pkill -9 nginx","tr":"Nginx süreçlerini zorla kapat","en":"Force kill nginx processes"}]}]},{"cat":"network","cmds":[{"name":"ping","tr":"Ağ ana bilgisayarına ICMP ECHO_REQUEST gönderir.","en":"Send ICMP ECHO_REQUEST to network hosts.","syntax":"ping [OPTION...] HOST","ex":[{"c":"ping google.com","tr":"Sunucuya ping at","en":"Ping server"}]},{"name":"curl","tr":"URL ile veri transferi yapar.","en":"Transfer a URL.","syntax":"curl [options...] <url>","ex":[{"c":"curl -O https://example.com/file.zip","tr":"Dosya indir","en":"Download file"},{"c":"curl -I https://example.com","tr":"HTTP başlıklarını getir","en":"Fetch HTTP headers"}]},{"name":"wget","tr":"Dosyaları ağdan indirir.","en":"The non-interactive network downloader.","syntax":"wget [option]... [URL]...","ex":[{"c":"wget https://example.com/file.iso","tr":"Dosya indir","en":"Download file"}]},{"name":"netstat","tr":"Ağ bağlantılarını, yönlendirme tablolarını vb. yazdırır.","en":"Print network connections, routing tables, etc.","syntax":"netstat [address_family_options] [--tcp|-t]","ex":[{"c":"netstat -tuln","tr":"Dinlenen portları göster","en":"Show listening ports"}]},{"name":"ss","tr":"Soketleri araştırmak için araç.","en":"Another utility to investigate sockets.","syntax":"ss [options]","ex":[{"c":"ss -tuln","tr":"Açık portları ve dinleyen servisleri listele","en":"List open ports and listening services"}]},{"name":"ifconfig","tr":"Bir ağ arayüzünü yapılandırır.","en":"Configure a network interface.","syntax":"ifconfig [-v] [-a] [-s] [interface]","ex":[{"c":"ifconfig","tr":"Ağ arayüzlerini listele","en":"List network interfaces"}]},{"name":"ip","tr":"Yönlendirme, ağ cihazları ve tünelleri gösterir / değiştirir.","en":"Show / manipulate routing, network devices, and tunnels.","syntax":"ip [ OPTIONS ] OBJECT { COMMAND | help }","ex":[{"c":"ip a","tr":"IP adreslerini göster","en":"Show IP addresses"}]},{"name":"nmap","tr":"Ağ keşfi ve güvenlik denetimi aracı.","en":"Network exploration tool and security / port scanner.","syntax":"nmap [Scan Type(s)] [Options] {target specification}","ex":[{"c":"nmap -p- localhost","tr":"Tüm portları tara","en":"Scan all ports"}]},{"name":"ssh","tr":"Uzak makineye giriş programı (SSH istemcisi).","en":"OpenSSH remote login client.","syntax":"ssh [options] destination [command]","ex":[{"c":"ssh user@host","tr":"Sunucuya bağlan","en":"Connect to server"}]},{"name":"scp","tr":"Ağdaki ana makineler arasında güvenli kopyalama.","en":"Secure copy (remote file copy program).","syntax":"scp [options] [[user@]host1:]file1 ... [[user@]host2:]file2","ex":[{"c":"scp file.txt user@host:/path","tr":"Dosyayı sunucuya kopyala","en":"Copy file to server"}]},{"name":"rsync","tr":"Hızlı ve çok yönlü dosya kopyalama aracı.","en":"A fast, versatile, remote (and local) file-copying tool.","syntax":"rsync [OPTION...] SRC... [DEST]","ex":[{"c":"rsync -avz folder/ user@host:/path","tr":"Klasörü sunucuyla senkronize et","en":"Sync folder to server"}]},{"name":"traceroute","tr":"Ağ paketinin yolunu izler.","en":"Print the route packets trace to network host.","syntax":"traceroute [options] host [packetsize]","ex":[{"c":"traceroute google.com","tr":"Paket rotasını göster","en":"Show packet route"}]},{"name":"dig","tr":"DNS aracı.","en":"DNS lookup utility.","syntax":"dig [@server] [name] [type]","ex":[{"c":"dig example.com","tr":"DNS kayıtlarını sorgula","en":"Query DNS records"}]},{"name":"nslookup","tr":"İnternet isim sunucularını etkileşimli sorgular.","en":"Query Internet name servers interactively.","syntax":"nslookup [name] [server]","ex":[{"c":"nslookup example.com","tr":"Alan adı IP adresini bul","en":"Find domain IP address"}]},{"name":"route","tr":"IP yönlendirme tablosunu gösterir veya değiştirir.","en":"Show / manipulate the IP routing table.","syntax":"route [options]","ex":[{"c":"route -n","tr":"Yönlendirme tablosunu sayısal göster","en":"Show routing table numerically"}]},{"name":"nc","tr":"Ağ bağlantıları için genel amaçlı araç (netcat).","en":"Arbitrary TCP and UDP connections and listens.","syntax":"nc [options] [hostname] [port]","ex":[{"c":"nc -vz localhost 80","tr":"Portun açık olup olmadığını kontrol et","en":"Check if port is open"}]},{"name":"tcpdump","tr":"Ağdaki trafik paketlerini yakalar ve inceler.","en":"Dump traffic on a network.","syntax":"tcpdump [options]","ex":[{"c":"sudo tcpdump -i eth0","tr":"eth0 arayüzündeki trafiği dinle","en":"Listen to traffic on eth0"}]},{"name":"mtr","tr":"Ağ tanılama aracı (ping ve traceroute birleşimi).","en":"A network diagnostic tool.","syntax":"mtr [options] hostname","ex":[{"c":"mtr google.com","tr":"Sürekli izleme yap","en":"Continuous network trace"}]},{"name":"whois","tr":"Alan adı veya IP adresi sahiplik bilgilerini sorgular.","en":"Client for the whois directory service.","syntax":"whois [options] object","ex":[{"c":"whois example.com","tr":"Alan adı kütük bilgilerini getir","en":"Get domain registry info"}]}]},{"cat":"packageManagement","cmds":[{"name":"apt","tr":"Komut satırı paket yöneticisi.","en":"Command-line package manager.","syntax":"apt [options] command","ex":[{"c":"apt update && apt upgrade","tr":"Sistemi güncelle","en":"Update system"},{"c":"apt install nginx","tr":"Paket yükle","en":"Install package"}]},{"name":"apt-get","tr":"APT paket yönetimi aracı.","en":"APT package handling utility.","syntax":"apt-get [options] command","ex":[{"c":"apt-get install curl","tr":"Paket yükle","en":"Install package"}]},{"name":"dpkg","tr":"Debian paket yöneticisi.","en":"Package manager for Debian.","syntax":"dpkg [option...] action","ex":[{"c":"dpkg -i package.deb","tr":"Deb paketi kur","en":"Install deb package"}]},{"name":"snap","tr":"Snap paketlerini yönetir.","en":"Tool to interact with snaps.","syntax":"snap [OPTIONS] <command>","ex":[{"c":"snap install vlc","tr":"Snap paketi yükle","en":"Install snap package"}]},{"name":"yum","tr":"Etkileşimli rpm paket yöneticisi.","en":"Yellowdog Updater Modified.","syntax":"yum [options] [command] [package ...]","ex":[{"c":"yum install git","tr":"Paket yükle","en":"Install package"}]},{"name":"dnf","tr":"RPM tabanlı sistemler için paket yöneticisi.","en":"DNF Package Manager.","syntax":"dnf [options] <command> [<args>...]","ex":[{"c":"dnf install htop","tr":"Paket yükle","en":"Install package"}]},{"name":"rpm","tr":"RPM Paket Yöneticisi.","en":"RPM Package Manager.","syntax":"rpm [OPTION...] [FILE]","ex":[{"c":"rpm -ivh package.rpm","tr":"RPM paketi kur","en":"Install RPM package"}]},{"name":"pacman","tr":"Arch Linux paket yöneticisi.","en":"Arch Linux package manager.","syntax":"pacman <operation> [options] [targets]","ex":[{"c":"pacman -Syu","tr":"Sistemi güncelle","en":"Update system"}]},{"name":"zypper","tr":"openSUSE paket yöneticisi.","en":"Command-line interface to ZYpp system management library (openSUSE).","syntax":"zypper [global-options] command [command-options] [arguments]","ex":[{"c":"zypper install nano","tr":"Paket yükle","en":"Install package"}]},{"name":"emerge","tr":"Gentoo paket yöneticisi.","en":"Command-line interface to the Portage system.","syntax":"emerge [options] [action] [ebuild | tbz2file | file | @set | atom] ...","ex":[{"c":"emerge --sync","tr":"Paket ağacını senkronize et","en":"Sync package tree"}]},{"name":"flatpak","tr":"Uygulamaları kurun ve yönetin.","en":"Build, install and run applications and runtimes.","syntax":"flatpak [OPTION…] COMMAND","ex":[{"c":"flatpak install flathub org.gimp.GIMP","tr":"Flatpak uygulaması yükle","en":"Install flatpak app"}]},{"name":"apk","tr":"Alpine Linux paket yöneticisi.","en":"Alpine Package Keeper.","syntax":"apk [<OPTIONS>...] COMMAND [<ARGUMENTS>...]","ex":[{"c":"apk add curl","tr":"Paket ekle","en":"Add package"}]}]},{"cat":"userManagement","cmds":[{"name":"useradd","tr":"Yeni kullanıcı oluşturur.","en":"Create a new user.","syntax":"useradd [options] LOGIN","ex":[{"c":"useradd -m newuser","tr":"Ev dizini ile kullanıcı oluştur","en":"Create user with home directory"}]},{"name":"usermod","tr":"Kullanıcı hesabını değiştirir.","en":"Modify a user account.","syntax":"usermod [options] LOGIN","ex":[{"c":"usermod -aG sudo user","tr":"Kullanıcıyı sudo grubuna ekle","en":"Add user to sudo group"}]},{"name":"userdel","tr":"Kullanıcı hesabını ve ilgili dosyaları siler.","en":"Delete a user account and related files.","syntax":"userdel [options] LOGIN","ex":[{"c":"userdel -r user","tr":"Kullanıcıyı ve ev dizinini sil","en":"Delete user and home directory"}]},{"name":"passwd","tr":"Kullanıcı şifresini değiştirir.","en":"Change user password.","syntax":"passwd [options] [LOGIN]","ex":[{"c":"passwd user","tr":"Kullanıcı şifresini değiştir","en":"Change user password"}]},{"name":"su","tr":"Kullanıcı ID'sini değiştirir veya süper kullanıcı olur.","en":"Change user ID or become superuser.","syntax":"su [options] [-] [USER [arg]...]","ex":[{"c":"su - user","tr":"Kullanıcıya geçiş yap","en":"Switch to user"}]},{"name":"sudo","tr":"Bir komutu başka bir kullanıcı olarak çalıştırır.","en":"Execute a command as another user.","syntax":"sudo [options] command","ex":[{"c":"sudo apt update","tr":"Yönetici yetkisiyle çalıştır","en":"Run with admin privileges"}]},{"name":"groups","tr":"Bir kullanıcının üye olduğu grupları yazdırır.","en":"Print the groups a user is in.","syntax":"groups [OPTION]... [USERNAME]...","ex":[{"c":"groups user","tr":"Kullanıcının gruplarını listele","en":"List user groups"}]},{"name":"id","tr":"Gerçek ve etkili kullanıcı ve grup ID'lerini yazdırır.","en":"Print real and effective user and group IDs.","syntax":"id [OPTION]... [USER]...","ex":[{"c":"id user","tr":"Kullanıcı kimlik bilgilerini göster","en":"Show user ID info"}]},{"name":"who","tr":"Kimlerin oturum açtığını gösterir.","en":"Show who is logged on.","syntax":"who [OPTION]... [ FILE | ARG1 ARG2 ]","ex":[{"c":"who","tr":"Oturum açanları listele","en":"List logged in users"}]},{"name":"w","tr":"Kimlerin çevrimiçi olduğunu ve ne yaptıklarını gösterir.","en":"Show who is logged on and what they are doing.","syntax":"w [options] [user]","ex":[{"c":"w","tr":"Kullanıcı etkinliklerini göster","en":"Show user activities"}]},{"name":"last","tr":"Son oturum açan kullanıcıları listeler.","en":"Show a listing of last logged in users.","syntax":"last [options] [username...] [tty...]","ex":[{"c":"last","tr":"Oturum açma geçmişini göster","en":"Show login history"}]},{"name":"chsh","tr":"Kullanıcının oturum açma kabuğunu değiştirir.","en":"Change login shell.","syntax":"chsh [options] [LOGIN]","ex":[{"c":"chsh -s /bin/zsh","tr":"Varsayılan kabuğu değiştir","en":"Change default shell"}]},{"name":"chfn","tr":"Kullanıcının parmak izi (finger) bilgilerini değiştirir.","en":"Change real user name and information.","syntax":"chfn [options] [LOGIN]","ex":[{"c":"chfn user","tr":"Kullanıcı bilgilerini düzenle","en":"Edit user information"}]},{"name":"lastlog","tr":"Tüm kullanıcıların son oturum açma zamanlarını bildirir.","en":"Report the most recent login of all users or of a given user.","syntax":"lastlog [options]","ex":[{"c":"lastlog","tr":"Son girişleri listele","en":"List last logins"}]}]},{"cat":"archiving","cmds":[{"name":"tar","tr":"Arşiv oluşturma ve açma aracı.","en":"An archiving utility.","syntax":"tar [OPTION...] [FILE]...","ex":[{"c":"tar -cvf archive.tar folder/","tr":"Arşiv oluştur","en":"Create archive"},{"c":"tar -xvf archive.tar","tr":"Arşivi çıkar","en":"Extract archive"}]},{"name":"gzip","tr":"Dosyaları sıkıştırır.","en":"Compress or expand files.","syntax":"gzip [OPTION]... [FILE]...","ex":[{"c":"gzip file.txt","tr":"Dosyayı sıkıştır","en":"Compress file"}]},{"name":"gunzip","tr":"Sıkıştırılmış dosyaları açar.","en":"Compress or expand files.","syntax":"gunzip [OPTION]... [FILE]...","ex":[{"c":"gunzip file.txt.gz","tr":"Dosyayı arşivden çıkar","en":"Decompress file"}]},{"name":"zip","tr":"Dosyaları paketler ve sıkıştırır.","en":"Package and compress (archive) files.","syntax":"zip [options] [zipfile [file...]]","ex":[{"c":"zip -r archive.zip folder/","tr":"Klasörü zip yap","en":"Zip a directory"}]},{"name":"unzip","tr":"ZIP dosyalarını açar.","en":"List, test and extract compressed files in a ZIP archive.","syntax":"unzip file[.zip]","ex":[{"c":"unzip archive.zip","tr":"ZIP dosyasını çıkar","en":"Extract ZIP file"}]},{"name":"bzip2","tr":"Blok sıralamalı dosya sıkıştırıcı.","en":"A block-sorting file compressor.","syntax":"bzip2 [filenames...]","ex":[{"c":"bzip2 file.txt","tr":"Dosyayı bz2 olarak sıkıştır","en":"Compress file as bz2"}]},{"name":"xz","tr":"XZ ve LZMA sıkıştırma aracı.","en":"Compress or decompress .xz and .lzma files.","syntax":"xz [option...]  [file...]","ex":[{"c":"xz file.txt","tr":"Dosyayı xz ile sıkıştır","en":"Compress file with xz"}]},{"name":"7z","tr":"Yüksek sıkıştırma oranlı dosya arşivleyici.","en":"A file archiver with highest compression ratio.","syntax":"7z <command> <archive_name> [<file_names>...]","ex":[{"c":"7z a archive.7z folder/","tr":"7z arşivi oluştur","en":"Create 7z archive"}]},{"name":"cpio","tr":"Dosyaları kopyalar ve arşiv oluşturur.","en":"Copy files to and from archives.","syntax":"cpio [OPTION...] [destination-directory]","ex":[{"c":"ls | cpio -ov > archive.cpio","tr":"Cpio arşivi oluştur","en":"Create cpio archive"}]},{"name":"dd","tr":"Dosya dönüştürür ve kopyalar (genellikle imaj almak için).","en":"Convert and copy a file.","syntax":"dd [OPERAND]...","ex":[{"c":"dd if=/dev/sda of=backup.img","tr":"Diskin imajını al","en":"Create disk image"}]},{"name":"zstd","tr":"Zstandard - Hızlı gerçek zamanlı sıkıştırma algoritması.","en":"Zstandard - Fast real-time compression algorithm.","syntax":"zstd [OPTIONS] [-|INPUT-FILE] [-o OUTPUT-FILE]","ex":[{"c":"zstd file.txt","tr":"Dosyayı zstd ile sıkıştır","en":"Compress file with zstd"}]}]},{"cat":"systemInfo","cmds":[{"name":"uname","tr":"Sistem bilgilerini yazdırır.","en":"Print system information.","syntax":"uname [OPTION]...","ex":[{"c":"uname -a","tr":"Tüm sistem bilgilerini göster","en":"Show all system info"}]},{"name":"uptime","tr":"Sistemin ne kadar süredir çalıştığını söyler.","en":"Tell how long the system has been running.","syntax":"uptime [options]","ex":[{"c":"uptime","tr":"Çalışma süresini göster","en":"Show uptime"}]},{"name":"free","tr":"Boş ve kullanılan bellek miktarını gösterir.","en":"Display amount of free and used memory in the system.","syntax":"free [options]","ex":[{"c":"free -h","tr":"Bellek kullanımını göster","en":"Show memory usage"}]},{"name":"lscpu","tr":"CPU mimarisi hakkında bilgi gösterir.","en":"Display information about the CPU architecture.","syntax":"lscpu [options]","ex":[{"c":"lscpu","tr":"İşlemci detaylarını göster","en":"Show CPU details"}]},{"name":"lsblk","tr":"Blok cihazları listeler.","en":"List block devices.","syntax":"lsblk [options] [device...]","ex":[{"c":"lsblk","tr":"Disk bölümlerini listele","en":"List disk partitions"}]},{"name":"lshw","tr":"Donanım konfigürasyonunu listeler.","en":"List hardware configuration.","syntax":"lshw [ -format ] [ -options ...  ]","ex":[{"c":"sudo lshw -short","tr":"Kısa donanım özeti göster","en":"Show short hardware summary"}]},{"name":"dmidecode","tr":"Bilgisayarın DMI tablo içeriklerini çözer.","en":"DMI table decoder.","syntax":"dmidecode [OPTIONS]","ex":[{"c":"sudo dmidecode -t memory","tr":"RAM bilgilerini göster","en":"Show RAM info"}]},{"name":"dmesg","tr":"Çekirdek ring tamponunu yazdırır veya kontrol eder.","en":"Print or control the kernel ring buffer.","syntax":"dmesg [options]","ex":[{"c":"dmesg | tail","tr":"Son çekirdek loglarını göster","en":"Show latest kernel logs"}]},{"name":"journalctl","tr":"Systemd loglarını sorgular.","en":"Query the systemd journal.","syntax":"journalctl [OPTIONS...]","ex":[{"c":"journalctl -u nginx","tr":"Nginx loglarını göster","en":"Show nginx logs"}]},{"name":"vmstat","tr":"Sanal bellek istatistiklerini raporlar.","en":"Report virtual memory statistics.","syntax":"vmstat [options] [delay [count]]","ex":[{"c":"vmstat 1","tr":"Sistem durumunu saniyede bir güncelle","en":"Update system status every second"}]},{"name":"iostat","tr":"Merkezi işlem birimi (CPU) istatistiklerini ve cihazlar için giriş/çıkış istatistiklerini raporlar.","en":"Report CPU and I/O statistics.","syntax":"iostat [options] [interval [count]]","ex":[{"c":"iostat -x 2","tr":"Genişletilmiş disk istatistiklerini izle","en":"Watch extended disk stats"}]},{"name":"hostnamectl","tr":"Sistem ana bilgisayar adını (hostname) kontrol eder.","en":"Control the system hostname.","syntax":"hostnamectl [OPTIONS...] COMMAND ...","ex":[{"c":"hostnamectl set-hostname newname","tr":"Bilgisayar adını değiştir","en":"Change computer name"}]},{"name":"timedatectl","tr":"Sistem saatini ve tarihini kontrol eder.","en":"Control the system time and date.","syntax":"timedatectl [OPTIONS...] COMMAND ...","ex":[{"c":"timedatectl status","tr":"Saat ve tarih durumunu gör","en":"View time and date status"}]},{"name":"cal","tr":"Bir takvim gösterir.","en":"Display a calendar.","syntax":"cal [options] [[[day] month] year]","ex":[{"c":"cal","tr":"Geçerli ayın takvimini göster","en":"Show calendar for current month"}]}]},{"cat":"shellScripting","cmds":[{"name":"echo","tr":"Metin satırı yazdırır.","en":"Display a line of text.","syntax":"echo [SHORT-OPTION]... [STRING]...","ex":[{"c":"echo 'Hello'","tr":"Ekrana metin yazdır","en":"Print text to screen"}]},{"name":"read","tr":"Standart girdiden bir satır okur.","en":"Read a line from standard input.","syntax":"read [-p prompt] [name ...]","ex":[{"c":"read -p 'Name: ' name","tr":"Kullanıcıdan girdi al","en":"Get user input"}]},{"name":"export","tr":"Çevresel değişkenleri ayarlar.","en":"Set an environment variable.","syntax":"export [name[=word]] ...","ex":[{"c":"export PATH=$PATH:/new/path","tr":"Yola yeni dizin ekle","en":"Add directory to PATH"}]},{"name":"env","tr":"Modifiye edilmiş bir çevrede komut çalıştırır.","en":"Run a program in a modified environment.","syntax":"env [OPTION]... [-] [NAME=VALUE]... [COMMAND [ARG]...]","ex":[{"c":"env","tr":"Çevresel değişkenleri listele","en":"List environment variables"}]},{"name":"alias","tr":"Komutlar için takma ad oluşturur.","en":"Define or display aliases.","syntax":"alias [-p] [name[=value] ... ]","ex":[{"c":"alias ll='ls -alF'","tr":"Kısayol oluştur","en":"Create shortcut"}]},{"name":"history","tr":"Komut geçmişini gösterir.","en":"Display or manipulate the history list.","syntax":"history","ex":[{"c":"history | grep 'ssh'","tr":"Geçmişte komut ara","en":"Search command in history"}]},{"name":"source","tr":"Bir dosyadan komut okur ve çalıştırır.","en":"Evaluate a file or resource as a Tcl script.","syntax":"source filename [arguments]","ex":[{"c":"source ~/.bashrc","tr":"Yapılandırmayı yeniden yükle","en":"Reload configuration"}]},{"name":"cron","tr":"Zamanlanmış görevleri çalıştıran servis.","en":"Daemon to execute scheduled commands (Vixie Cron).","syntax":"cron [-f] [-l] [-L loglevel]","ex":[{"c":"crontab -e","tr":"Zamanlanmış görevleri düzenle","en":"Edit scheduled tasks"}]},{"name":"at","tr":"Komutları daha sonra çalıştırmak için kuyruğa alır.","en":"Queue, examine or delete jobs for later execution.","syntax":"at [-V] [-q queue] [-f file] [-mMlv] timespec ...","ex":[{"c":"echo 'reboot' | at now + 1 hour","tr":"1 saat sonra yeniden başlat","en":"Reboot after 1 hour"}]},{"name":"xargs","tr":"Standart girdiden komutlar oluşturur ve çalıştırır.","en":"Build and execute command lines from standard input.","syntax":"xargs [options] [command [initial-arguments]]","ex":[{"c":"find . -name '*.bak' | xargs rm","tr":"Bulunan dosyaları sil","en":"Delete found files"}]},{"name":"tee","tr":"Standart girdiyi okur ve hem standart çıktıya hem dosyalara yazar.","en":"Read from standard input and write to standard output and files.","syntax":"tee [OPTION]... [FILE]...","ex":[{"c":"echo 'text' | tee file.txt","tr":"Ekrana ve dosyaya yazdır","en":"Print to screen and file"}]},{"name":"watch","tr":"Bir komutu periyodik olarak çalıştırıp çıktısını tam ekran gösterir.","en":"Execute a program periodically, showing output fullscreen.","syntax":"watch [options] command","ex":[{"c":"watch -n 1 free -m","tr":"Bellek kullanımını her saniye yenile","en":"Refresh memory usage every second"}]},{"name":"printf","tr":"Veriyi biçimlendirir ve yazdırır.","en":"Format and print data.","syntax":"printf FORMAT [ARGUMENT]...","ex":[{"c":"printf 'Hello %s\\n' 'World'","tr":"Biçimlendirilmiş çıktı yazdır","en":"Print formatted output"}]},{"name":"test","tr":"Dosya türlerini kontrol eder ve değerleri karşılaştırır.","en":"Check file types and compare values.","syntax":"test EXPRESSION","ex":[{"c":"test -f file.txt && echo 'Exists'","tr":"Dosya varsa yazdır","en":"Print if file exists"}]},{"name":"expr","tr":"İfadeleri değerlendirir.","en":"Evaluate expressions.","syntax":"expr EXPRESSION","ex":[{"c":"expr 5 + 3","tr":"Matematiksel işlemi yap","en":"Evaluate math expression"}]},{"name":"sleep","tr":"Belirli bir süre bekler.","en":"Delay for a specified amount of time.","syntax":"sleep NUMBER[SUFFIX]...","ex":[{"c":"sleep 5s","tr":"5 saniye bekle","en":"Wait for 5 seconds"}]},{"name":"unalias","tr":"Oluşturulan takma adları (alias) kaldırır.","en":"Remove alias definitions.","syntax":"unalias [-a] name [name ...]","ex":[{"c":"unalias ll","tr":"ll kısayolunu kaldır","en":"Remove ll alias"}]},{"name":"type","tr":"Bir komutun nasıl yorumlanacağını gösterir.","en":"Write a description of the command type.","syntax":"type [-afptP] name [name ...]","ex":[{"c":"type ls","tr":"ls komutunun türünü öğren","en":"Find out type of ls command"}]}]},{"cat":"permissionsSecurity","cmds":[{"name":"chmod","tr":"Dosya erişim izinlerini değiştirir.","en":"Change file mode bits.","syntax":"chmod [OPTION]... MODE[,MODE]... FILE...","ex":[{"c":"chmod 755 script.sh","tr":"Çalıştırma izni ver","en":"Grant execute permission"}]},{"name":"chown","tr":"Dosya sahibi ve grubunu değiştirir.","en":"Change file owner and group.","syntax":"chown [OPTION]... [OWNER][:[GROUP]] FILE...","ex":[{"c":"chown user:group file.txt","tr":"Sahibi ve grubu değiştir","en":"Change owner and group"}]},{"name":"umask","tr":"Dosya oluşturma maskesini belirler.","en":"Set file mode creation mask.","syntax":"umask [-p] [-S] [mode]","ex":[{"c":"umask 022","tr":"Varsayılan izinleri ayarla","en":"Set default permissions"}]},{"name":"visudo","tr":"sudoers dosyasını güvenle düzenler.","en":"Edit the sudoers file.","syntax":"visudo [-chqsV] [-f sudoers]","ex":[{"c":"sudo visudo","tr":"Sudo yetkilerini düzenle","en":"Edit sudo permissions"}]},{"name":"iptables","tr":"IPv4 paket filtreleme ve NAT aracı.","en":"Administration tool for IPv4 packet filtering and NAT.","syntax":"iptables [options]","ex":[{"c":"iptables -L","tr":"Güvenlik duvarı kurallarını listele","en":"List firewall rules"}]},{"name":"ufw","tr":"Karmaşık olmayan güvenlik duvarı.","en":"Program for managing a Netfilter firewall.","syntax":"ufw [--dry-run] [options] [rule syntax]","ex":[{"c":"ufw enable","tr":"Güvenlik duvarını etkinleştir","en":"Enable firewall"},{"c":"ufw allow 22/tcp","tr":"SSH portuna izin ver","en":"Allow SSH port"}]},{"name":"fail2ban","tr":"Saldırıları önlemek için log dosyalarını tarar ve IP'leri yasaklar.","en":"Scan log files and ban IPs that show the malicious signs.","syntax":"fail2ban-client [OPTIONS] <COMMAND>","ex":[{"c":"fail2ban-client status","tr":"Durumu kontrol et","en":"Check status"}]},{"name":"gpg","tr":"Güvenli iletişim için şifreleme ve imzalama aracı.","en":"OpenPGP encryption and signing tool.","syntax":"gpg [options] [files]","ex":[{"c":"gpg -c file.txt","tr":"Dosyayı şifrele","en":"Encrypt file"}]},{"name":"openssl","tr":"SSL/TLS kütüphanesi için komut satırı aracı.","en":"Command line tool for using the OpenSSL crypto library.","syntax":"openssl command [ command_opts ] [ command_args ]","ex":[{"c":"openssl genrsa -out key.pem 2048","tr":"RSA anahtarı oluştur","en":"Generate RSA key"}]},{"name":"setfacl","tr":"Dosya erişim kontrol listelerini (ACL) belirler.","en":"Set file access control lists.","syntax":"setfacl [-bkndRLPvh] [{-m|-x} acl_spec] [{-M|-X} acl_file] file ...","ex":[{"c":"setfacl -m u:user:rw file.txt","tr":"Kullanıcıya özel okuma/yazma izni ver","en":"Grant specific user read/write access"}]},{"name":"getfacl","tr":"Dosya erişim kontrol listelerini (ACL) alır.","en":"Get file access control lists.","syntax":"getfacl [-aceEsRLPvdh] file ...","ex":[{"c":"getfacl file.txt","tr":"Dosyanın genişletilmiş izinlerini gör","en":"View extended permissions of file"}]},{"name":"chcon","tr":"Dosya güvenlik bağlamını değiştirir (SELinux).","en":"Change file security context.","syntax":"chcon [OPTION]... CONTEXT FILE...","ex":[{"c":"chcon -t httpd_sys_content_t file.html","tr":"Dosyayı apache için erişilebilir yap","en":"Make file accessible for apache"}]},{"name":"restorecon","tr":"Varsayılan SELinux güvenlik bağlamlarını geri yükler.","en":"Restore default SELinux security contexts.","syntax":"restorecon [options] pathname...","ex":[{"c":"restorecon -v /var/www/html/index.html","tr":"Bağlamı orijinaline döndür","en":"Restore context to original"}]},{"name":"auditctl","tr":"Çekirdeğin audit (denetim) sistemini yapılandırır.","en":"A utility to assist controlling the kernel's audit system.","syntax":"auditctl [options]","ex":[{"c":"auditctl -l","tr":"Tüm aktif denetim kurallarını listele","en":"List all active audit rules"}]}]}];
+const dict = {
+  tr: {
+    title: "Linux Komut El Kitabı",
+    search: "Komut ara... (Ctrl+K)",
+    noResults: "Sonuç bulunamadı",
+    syntax: "Sözdizimi",
+    examples: "Örnekler",
+    about: "Hakkında / Krediler",
+    developedBy: "💜 ile geliştirildi, Arda Meçik",
+    copy: "Kopyala",
+    copied: "Kopyalandı!",
+    cat: {
+      fileSystem: "Dosya Sistemi",
+      textProcessing: "Metin İşleme",
+      processManagement: "Süreç Yönetimi",
+      network: "Ağ",
+      packageManagement: "Paket Yönetimi",
+      userManagement: "Kullanıcı Yönetimi",
+      archiving: "Arşivleme",
+      systemInfo: "Sistem Bilgisi",
+      shellScripting: "Kabuk ve Betik",
+      permissionsSecurity: "İzinler ve Güvenlik"
+    }
+  },
+  en: {
+    title: "Linux Command Handbook",
+    search: "Search commands... (Ctrl+K)",
+    noResults: "No results found",
+    syntax: "Syntax",
+    examples: "Examples",
+    about: "About / Credits",
+    developedBy: "Developed with 💜 by Arda Meçik",
+    copy: "Copy",
+    copied: "Copied!",
+    cat: {
+      fileSystem: "File System",
+      textProcessing: "Text Processing",
+      processManagement: "Process Management",
+      network: "Network",
+      packageManagement: "Package Management",
+      userManagement: "User Management",
+      archiving: "Archiving",
+      systemInfo: "System Info",
+      shellScripting: "Shell & Scripting",
+      permissionsSecurity: "Permissions & Security"
+    }
+  }
+};
+
+let currentLang = 'tr';
+let isDark = true;
+
+const el = (id) => document.getElementById(id);
+const q = (sel) => document.querySelector(sel);
+const qa = (sel) => document.querySelectorAll(sel);
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>'"]/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[char]));
+}
+
+function render() {
+  const t = dict[currentLang];
+  document.title = t.title;
+  el('app-title').textContent = t.title;
+  el('search-input').placeholder = t.search;
+  el('no-results').textContent = t.noResults;
+  el('footer-text').textContent = t.developedBy;
+  el('about-title').textContent = t.about;
+  el('about-text').textContent = t.developedBy;
+
+  const aside = el('category-list');
+  aside.innerHTML = '';
+  db.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'category-btn';
+    btn.dataset.target = 'sec-' + cat.cat;
+    btn.innerHTML = '<span>' + t.cat[cat.cat] + '</span><span class="badge">' + cat.cmds.length + '</span>';
+    btn.onclick = () => {
+      const target = el('sec-' + cat.cat);
+      if (target) {
+        const offset = target.getBoundingClientRect().top + window.scrollY - 120;
+        window.scrollTo({ top: offset, behavior: 'smooth' });
+      }
+    };
+    aside.appendChild(btn);
+  });
+
+  const content = el('main-content');
+  content.innerHTML = '';
+  db.forEach(cat => {
+    const sec = document.createElement('section');
+    sec.className = 'category-section';
+    sec.id = 'sec-' + cat.cat;
+    
+    const h2 = document.createElement('h2');
+    h2.className = 'category-title';
+    h2.textContent = t.cat[cat.cat];
+    sec.appendChild(h2);
+
+    const grid = document.createElement('div');
+    grid.className = 'commands-grid';
+
+    cat.cmds.forEach(cmd => {
+      const card = document.createElement('article');
+      card.className = 'command-card search-item';
+      card.dataset.cmd = cmd.name.toLowerCase();
+      card.dataset.desc = cmd[currentLang].toLowerCase();
+
+      let exHtml = '';
+      cmd.ex.forEach(ex => {
+        exHtml += '<div class="ex-item"><div class="ex-item-desc">' + escapeHtml(ex[currentLang]) + '</div><div class="code-block"><button class="copy-btn" aria-label="' + t.copy + '" onclick="copyCode(this)">' + svgCopy + '</button><pre><code>' + escapeHtml(ex.c) + '</code></pre></div></div>';
+      });
+
+      card.innerHTML = '<div class="cmd-header"><h3 class="cmd-name"><code>' + escapeHtml(cmd.name) + '</code></h3><p class="cmd-desc">' + escapeHtml(cmd[currentLang]) + '</p></div><div class="cmd-body"><div class="cmd-section-title">' + t.syntax + '</div><div class="code-block"><button class="copy-btn" aria-label="' + t.copy + '" onclick="copyCode(this)">' + svgCopy + '</button><pre><code>' + escapeHtml(cmd.syntax) + '</code></pre></div></div><div class="cmd-examples"><div class="cmd-section-title">' + t.examples + '</div><div class="ex-list">' + exHtml + '</div></div>';
+      grid.appendChild(card);
+    });
+
+    sec.appendChild(grid);
+    content.appendChild(sec);
+  });
+
+  setupObservers();
+  filterCommands(el('search-input').value);
+}
+
+const svgCopy = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+const svgCheck = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+window.copyCode = function(btn) {
+  const code = btn.nextElementSibling.textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const original = btn.innerHTML;
+    btn.innerHTML = svgCheck;
+    setTimeout(() => { btn.innerHTML = original; }, 1500);
+  });
+};
+
+function setupObservers() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  qa('.command-card').forEach(card => observer.observe(card));
+
+  const secObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        qa('.category-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.target === entry.target.id);
+        });
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '-100px 0px -60% 0px' });
+  qa('.category-section').forEach(sec => secObserver.observe(sec));
+}
+
+function filterCommands(query) {
+  query = query.toLowerCase();
+  let foundAny = false;
+  qa('.search-item').forEach(card => {
+    const text = card.dataset.cmd + ' ' + card.dataset.desc;
+    if (text.includes(query)) {
+      card.style.display = 'flex';
+      foundAny = true;
+      if (query.length > 0) {
+        highlightNode(card.querySelector('.cmd-name code'), query);
+        highlightNode(card.querySelector('.cmd-desc'), query);
+      } else {
+        removeHighlight(card.querySelector('.cmd-name code'));
+        removeHighlight(card.querySelector('.cmd-desc'));
+      }
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  qa('.category-section').forEach(sec => {
+    const visibleCards = sec.querySelectorAll('.search-item[style="display: flex;"]');
+    sec.style.display = visibleCards.length > 0 ? 'block' : 'none';
+  });
+
+  el('no-results').style.display = foundAny ? 'none' : 'block';
+}
+
+function highlightNode(node, query) {
+  removeHighlight(node);
+  if (!query) return;
+  const regex = new RegExp('(' + query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + ')', 'gi');
+  node.innerHTML = node.innerHTML.replace(regex, '<span class="highlight">$1</span>');
+}
+
+function removeHighlight(node) {
+  node.innerHTML = node.innerHTML.replace(/<span class="highlight">(.*?)<\/span>/g, '$1');
+}
+
+el('search-input').addEventListener('input', (e) => filterCommands(e.target.value));
+
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey && e.key === 'k') || e.key === '/') {
+    e.preventDefault();
+    el('search-input').focus();
+  }
+});
+
+el('lang-toggle').addEventListener('click', () => {
+  currentLang = currentLang === 'tr' ? 'en' : 'tr';
+  el('lang-text').textContent = currentLang.toUpperCase();
+  render();
+});
+
+el('theme-toggle').addEventListener('click', () => {
+  isDark = !isDark;
+  document.body.className = isDark ? 'theme-dark' : 'theme-light';
+  el('theme-icon').innerHTML = isDark 
+    ? '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>'
+    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+});
+
+window.addEventListener('scroll', () => {
+  const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = (winScroll / height) * 100;
+  el('progress-bar').style.width = scrolled + '%';
+  
+  if (winScroll > 300) {
+    el('scroll-top').classList.add('visible');
+  } else {
+    el('scroll-top').classList.remove('visible');
+  }
+});
+
+el('scroll-top').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+render();
+</script>
+</body>
+</html>
