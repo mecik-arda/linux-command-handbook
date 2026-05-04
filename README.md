@@ -21,7 +21,7 @@ This project is a comprehensive, modern "Linux Command Handbook" built entirely 
 
 ### Included Commands
 
-Below is the complete list of over 130 Linux commands included in the project, categorized into 10 sections:
+Below is the complete list of over 200 Linux commands and cybersecurity concepts included in the project, categorized into 20 sections:
 
 #### File System
 `ls`, `cd`, `pwd`, `mkdir`, `rm`, `cp`, `mv`, `find`, `locate`, `touch`, `ln`, `chmod`, `chown`, `df`, `du`, `mount`, `umount`, `chattr`, `lsattr`, `stat`, `file`, `tree`, `basename`, `dirname`, `realpath`, `shred`
@@ -53,6 +53,36 @@ Below is the complete list of over 130 Linux commands included in the project, c
 #### Permissions & Security
 `chmod`, `chown`, `umask`, `visudo`, `iptables`, `ufw`, `fail2ban`, `gpg`, `openssl`, `setfacl`, `getfacl`, `chcon`, `restorecon`, `auditctl`
 
+#### Reconnaissance
+`netdiscover`, `arp-scan`, `nikto`, `dirbuster`, `dirb`, `ffuf`, `nessus`, `Burp Suite`, `SNMP Enumeration`, `FTP Enumeration`
+
+#### Exploitation
+`msfconsole`, `php-reverse-shell`, `OpenFuck`, `AutoBlue-MS17-010`, `pwn_jenkins`, `Targeting OpenSSH`, `Targeting MySQL`, `Targeting vsFTPd`
+
+#### Metasploit
+`Scanner Modules`, `Vulnerability Scan`, `Critical Windows Exploits`, `Web and Linux Exploits`, `Pass The Hash & BadUSB`, `PsExec SMB Exploit`, `MSFVenom Payload Gen`, `Backdooring PEs`, `Token Impersonation`, `Mimikatz Hash Dumping`, `Resource Scripts`, `WinRM Exploit`, `Tomcat JSP Upload Bypass`, `vsftpd 2.3.4 Backdoor`, `PsExec Pass The Hash`, `SSH Brute-Force`
+
+#### Privilege Escalation
+`linpeas`, `pspy`, `GTFOBins`, `Windows Exploit Suggester`, `Windows Kernel Exploits`, `UACME Bypass`, `Weak Permissions`, `Sudo Privileges`, `Windows PrivEsc Paths`
+
+#### Post Exploitation
+`Shell to Meterpreter`, `Windows Persistence`, `Enable RDP (getgui)`, `Windows Keylogging`, `Clear Event Logs`, `enum_system`, `enum_protections`, `enum_configs`, `enum_users_history`, `checkvm`, `is_known_pipename`, `Shellter AV Evasion`, `PowerShell Obfuscation`, `Windows Local Enum`, `Linux Local Enum`, `Auto Enum Scripts`, `File Transfer`, `Upgrade to Interactive TTY`, `SSH Key Persistence`, `Cron Jobs Persistence`, `Registry Persistence`, `RDP Persistence`, `Pivoting`
+
+#### Password Cracking
+`hash-identifier`, `hashcat`, `john`, `hydra`, `fcrackzip`, `Linux Shadow Hash Types`, `NTLM Dumping & Cracking`
+
+#### Active Directory Initial Access
+`LLMNR / NBT-NS Poisoning`, `responder`, `ntlmrelayx.py`, `netexec (nxc) / crackmapexec`, `SMB Relay Attacks`
+
+#### Network Attacks
+`hping3`, `arpspoof`, `urlsnarf`, `dnsspoof`, `setoolkit`, `bettercap`
+
+#### Advanced Nmap
+`Host Discovery`, `Stealth/TCP Scan`, `UDP Scan`, `Version & OS Detect`, `NSE Script Scan`, `Performance & Evasion`
+
+#### Concepts
+`IP & MAC Addresses`, `TCP vs UDP`, `OSI Model`, `Subnetting`, `Pentest Lifecycle`, `Reverse & Bind Shell`, `Staged vs Non-Staged`, `Payload: reverse_tcp`, `Payload: jsp_shell_bind_tcp`, `Reverse Shell Cheatsheet`
+
 ### Installation & Usage
 
 No Node.js or database setup is required for this project.
@@ -82,7 +112,7 @@ Bu proje, kapsamlı ve modern bir arayüze sahip, tamamen tek bir HTML dosyasın
 
 ### İçerilen Komutlar
 
-Proje içerisinde yer alan 10 farklı kategori ve 130'un üzerindeki Linux komutlarının tam listesi aşağıdadır:
+Proje içerisinde yer alan 20 farklı kategori ve 200'ün üzerindeki Linux komutu / siber güvenlik kavramının tam listesi aşağıdadır:
 
 #### Dosya Sistemi
 `ls`, `cd`, `pwd`, `mkdir`, `rm`, `cp`, `mv`, `find`, `locate`, `touch`, `ln`, `chmod`, `chown`, `df`, `du`, `mount`, `umount`, `chattr`, `lsattr`, `stat`, `file`, `tree`, `basename`, `dirname`, `realpath`, `shred`
@@ -113,6 +143,36 @@ Proje içerisinde yer alan 10 farklı kategori ve 130'un üzerindeki Linux komut
 
 #### İzinler ve Güvenlik
 `chmod`, `chown`, `umask`, `visudo`, `iptables`, `ufw`, `fail2ban`, `gpg`, `openssl`, `setfacl`, `getfacl`, `chcon`, `restorecon`, `auditctl`
+
+#### Keşif (Reconnaissance)
+`netdiscover`, `arp-scan`, `nikto`, `dirbuster`, `dirb`, `ffuf`, `nessus`, `Burp Suite`, `SNMP Numaralandırması`, `FTP Numaralandırması`
+
+#### İstismar (Exploitation)
+`msfconsole`, `php-reverse-shell`, `OpenFuck`, `AutoBlue-MS17-010`, `pwn_jenkins`, `Hedef: OpenSSH`, `Hedef: MySQL Veritabanı`, `Hedef: vsFTPd`
+
+#### Metasploit
+`MSF ile Numaralandırma`, `Zafiyet Taraması`, `Kritik Windows İstismarları`, `Web ve Linux İstismarları`, `İleri Seviye Taktikler`, `PsExec ile SMB İstismarı`, `MSFVenom Yük Oluşturma`, `Taşınabilir Dağıtımlara Yük İliştirme`, `Erişim Token'i Taklidi`, `Mimikatz ile Hash Boşaltma`, `Resource Script ile MSF Otomasyonu`, `WinRM Açığı`, `Tomcat JSP Upload Bypass`, `vsftpd 2.3.4 Backdoor Açığı`, `PsExec ile Pass The Hash`, `SSH Brute-Force`
+
+#### Yetki Yükseltme (Privilege Escalation)
+`linpeas`, `pspy`, `GTFOBins`, `Windows Exploit Suggester`, `Windows Kernel Exploits`, `UACME ile UAC'yi Atlatma`, `Zayıf Yetkilendirmeler`, `Sudo Privileges`, `Windows Yetki Yükseltme Yolları`
+
+#### Sömürü Sonrası (Post Exploitation)
+`Shell'i Meterpreter'a Yükseltme`, `Windows'ta Kalıcılık Oluşturma`, `RDP Etkinleştirme (getgui)`, `Windows Keylogging`, `Olay Günlüklerini Temizleme`, `enum_system`, `enum_protections`, `enum_configs`, `enum_users_history`, `checkvm`, `is_known_pipename`, `Shellter ile AV Atlatma`, `PowerShell Kod Gizleme`, `Windows Yerel Numaralandırma`, `Linux Yerel Numaralandırma`, `Otomatik Yerel Numaralandırma`, `Dosyaları Hedefe Aktarma`, `Etkileşimli Olmayan Shell'i Yükseltme`, `SSH Key ile Kalıcılık`, `Cron Jobs ile Kalıcılık`, `Registry Kalıcılığı`, `RDP Yoluyla Kalıcılık`, `Pivoting (Sıçrama Saldırısı)`
+
+#### Parola Kırma (Password Cracking)
+`hash-identifier`, `hashcat`, `john`, `hydra`, `fcrackzip`, `Linux /etc/shadow Hash Türleri`, `NTLM Hash Yığınlama ve Kırma`
+
+#### AD İlk Erişim (Active Directory Initial Access)
+`LLMNR / NBT-NS Poisoning`, `responder`, `hashcat (NTLMv2 Kırma)`, `john (NTLMv2 Kırma)`, `ntlmrelayx.py`, `netexec (nxc) / crackmapexec`, `SMB Relay Saldırıları`
+
+#### Ağ Saldırıları (Network Attacks)
+`hping3`, `arpspoof`, `urlsnarf`, `dnsspoof`, `setoolkit`, `bettercap`
+
+#### Gelişmiş Nmap (Advanced Nmap)
+`nmap (Host Keşfi)`, `nmap (Stealth/TCP Tarama)`, `nmap (UDP Tarama)`, `nmap (Versiyon ve OS Tespiti)`, `nmap (NSE Script Taraması)`, `nmap (Performans ve Gizlilik)`
+
+#### Siber Güvenlik Kavramları (Concepts)
+`IP & MAC Adresleri`, `TCP vs UDP`, `OSI Modeli`, `Subnetting`, `Pentest Yaşam Döngüsü`, `Reverse & Bind Shell`, `Staged vs Non-Staged`, `Payload Türü: reverse_tcp`, `Payload Türü: jsp_shell_bind_tcp`, `Reverse Shell Cheatsheet`
 
 ### Kurulum ve Kullanım
 
