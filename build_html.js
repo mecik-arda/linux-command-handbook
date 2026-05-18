@@ -25,7 +25,14 @@ body.theme-light #search-input { background: rgba(255, 255, 255, 0.5); color: #0
 .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); opacity: 0.5; }
 main { display: flex; max-width: 1400px; margin: 0 auto; padding: 2rem; gap: 2rem; min-height: 80vh; }
 aside { width: 250px; flex-shrink: 0; }
-.category-list { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 0.5rem; }
+.sidebar-container { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 0.25rem; width: 250px; flex-shrink: 0; max-height: calc(100vh - 140px); }
+.category-list { display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; padding-right: 0.5rem; scroll-behavior: smooth; }
+.category-list::-webkit-scrollbar { width: 4px; }
+.category-list::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 4px; }
+.category-list::-webkit-scrollbar-thumb { background: rgba(124, 58, 237, 0.2); border-radius: 4px; }
+.category-list::-webkit-scrollbar-thumb:hover { background: rgba(124, 58, 237, 0.5); }
+.aside-scroll-btn { display: flex; align-items: center; justify-content: center; padding: 0.4rem; background: rgba(124, 58, 237, 0.08); color: #a855f7; border-radius: 0.5rem; border: 1px solid rgba(124, 58, 237, 0.12); cursor: pointer; transition: all 0.2s; width: calc(100% - 0.5rem); }
+.aside-scroll-btn:hover { background: rgba(124, 58, 237, 0.18); color: #fff; box-shadow: 0 2px 8px rgba(124, 58, 237, 0.15); }
 .category-btn { text-align: left; padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
 .category-btn:hover, .category-btn.active { background: rgba(124, 58, 237, 0.1); color: #a855f7; }
 .badge { background: rgba(124, 58, 237, 0.2); padding: 0.1rem 0.4rem; border-radius: 1rem; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
@@ -64,7 +71,7 @@ body.theme-light .footer-banner { background: linear-gradient(to right, rgba(245
 .credit-card { text-align: center; padding: 3rem; background: rgba(30, 27, 75, 0.2); border-radius: 1rem; border: 1px solid rgba(124, 58, 237, 0.2); margin-top: 4rem; backdrop-filter: blur(10px); }
 body.theme-light .credit-card { background: rgba(255, 255, 255, 0.6); }
 .credit-card h2 { margin-bottom: 1.5rem; color: #a855f7; font-size: 2rem; }
-@media (max-width: 1024px) { main { flex-direction: column; } aside { width: 100%; } .category-list { position: static; flex-direction: row; flex-wrap: wrap; } .category-btn { flex-basis: calc(50% - 0.5rem); } .commands-grid { grid-template-columns: 1fr; } #search-input { width: 200px; } #search-input:focus { width: 250px; } }
+@media (max-width: 1024px) { main { flex-direction: column; } aside { width: 100%; } .sidebar-container { position: static; width: 100%; max-height: none; } .category-list { position: static; flex-direction: row; flex-wrap: wrap; overflow-y: visible; } .aside-scroll-btn { display: none; } .category-btn { flex-basis: calc(50% - 0.5rem); } .commands-grid { grid-template-columns: 1fr; } #search-input { width: 200px; } #search-input:focus { width: 250px; } }
 @media (max-width: 768px) { nav { flex-direction: column; gap: 1rem; padding: 1rem; } .nav-actions { width: 100%; justify-content: space-between; flex-wrap: wrap; } .search-container { flex-grow: 1; margin-right: 0; width: 100%; order: 3; } #search-input { width: 100%; } #search-input:focus { width: 100%; } .category-btn { flex-basis: 100%; } }
 `;
 
@@ -78,7 +85,7 @@ const dict = {
     syntax: "Sözdizimi",
     examples: "Örnekler",
     about: "Hakkında / Krediler",
-    developedBy: "💜 ile geliştirildi, Arda Meçik",
+    developedBy: "Arda Meçik tarafından geliştirildi",
     copy: "Kopyala",
     copied: "Kopyalandı!",
     cat: {
@@ -91,7 +98,17 @@ const dict = {
       archiving: "Arşivleme",
       systemInfo: "Sistem Bilgisi",
       shellScripting: "Kabuk ve Betik",
-      permissionsSecurity: "İzinler ve Güvenlik"
+      permissionsSecurity: "İzinler ve Güvenlik",
+      reconnaissance: "Bilgi Toplama (Recon)",
+      exploitation: "Sömürü (Exploitation)",
+      metasploit: "Metasploit Framework",
+      privilegeEscalation: "Yetki Yükseltme",
+      postExploitation: "İleri/Kalıcılık (Post-Exploitation)",
+      passwordCracking: "Parola Kırma",
+      adInitialAccess: "Aktif Dizin'e İlk Adım",
+      networkAttacks: "Ağ Saldırıları",
+      nmapAdvanced: "Nmap Komutları",
+      concepts: "Temel Kavramlar"
     }
   },
   en: {
@@ -101,7 +118,7 @@ const dict = {
     syntax: "Syntax",
     examples: "Examples",
     about: "About / Credits",
-    developedBy: "Developed with 💜 by Arda Meçik",
+    developedBy: "Developed by Arda Meçik",
     copy: "Copy",
     copied: "Copied!",
     cat: {
@@ -114,7 +131,17 @@ const dict = {
       archiving: "Archiving",
       systemInfo: "System Info",
       shellScripting: "Shell & Scripting",
-      permissionsSecurity: "Permissions & Security"
+      permissionsSecurity: "Permissions & Security",
+      reconnaissance: "Reconnaissance",
+      exploitation: "Exploitation",
+      metasploit: "Metasploit Framework",
+      privilegeEscalation: "Privilege Escalation",
+      postExploitation: "Post-Exploitation",
+      passwordCracking: "Password Cracking",
+      adInitialAccess: "AD Initial Access",
+      networkAttacks: "Network Attacks",
+      nmapAdvanced: "Nmap Commands",
+      concepts: "Basic Concepts"
     }
   }
 };
@@ -203,12 +230,40 @@ const svgCheck = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" st
 
 window.copyCode = function(btn) {
   const code = btn.nextElementSibling.textContent;
-  navigator.clipboard.writeText(code).then(() => {
-    const original = btn.innerHTML;
+  const original = btn.innerHTML;
+  
+  const onSuccess = () => {
     btn.innerHTML = svgCheck;
     setTimeout(() => { btn.innerHTML = original; }, 1500);
-  });
+  };
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(onSuccess).catch(() => {
+      fallbackCopyText(code, onSuccess);
+    });
+  } else {
+    fallbackCopyText(code, onSuccess);
+  }
 };
+
+function fallbackCopyText(text, cb) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+  textArea.style.opacity = "0";
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    if (cb) cb();
+  } catch (err) {
+    console.error('Fallback copy failed', err);
+  }
+  document.body.removeChild(textArea);
+}
 
 function setupObservers() {
   const observer = new IntersectionObserver((entries) => {
@@ -311,6 +366,38 @@ el('scroll-top').addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
+// Sidebar scroll buttons logic
+const catList = el('category-list');
+const btnUp = el('scroll-aside-up');
+const btnDown = el('scroll-aside-down');
+
+if (catList && btnUp && btnDown) {
+  btnUp.onclick = () => {
+    catList.scrollBy({ top: -150, behavior: 'smooth' });
+  };
+  btnDown.onclick = () => {
+    catList.scrollBy({ top: 150, behavior: 'smooth' });
+  };
+
+  const toggleScrollBtns = () => {
+    const showUp = catList.scrollTop > 5;
+    const showDown = catList.scrollTop + catList.clientHeight < catList.scrollHeight - 5;
+    btnUp.style.visibility = showUp ? 'visible' : 'hidden';
+    btnUp.style.opacity = showUp ? '0.8' : '0';
+    btnDown.style.visibility = showDown ? 'visible' : 'hidden';
+    btnDown.style.opacity = showDown ? '0.8' : '0';
+  };
+
+  catList.addEventListener('scroll', toggleScrollBtns);
+  window.addEventListener('resize', toggleScrollBtns);
+  
+  // Watch if category list content or visibility changes (like during searches)
+  const obs = new MutationObserver(toggleScrollBtns);
+  obs.observe(catList, { childList: true, subtree: true });
+  
+  setTimeout(toggleScrollBtns, 200);
+}
+
 render();
 `;
 
@@ -357,8 +444,14 @@ const html = `<!DOCTYPE html>
         </div>
     </nav>
     <main>
-        <aside>
+        <aside class="sidebar-container">
+            <button id="scroll-aside-up" class="aside-scroll-btn" style="transition: all 0.2s; visibility: hidden; opacity: 0;" aria-label="Scroll menu up">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
             <div id="category-list" class="category-list"></div>
+            <button id="scroll-aside-down" class="aside-scroll-btn" style="transition: all 0.2s; visibility: hidden; opacity: 0;" aria-label="Scroll menu down">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
         </aside>
         <div class="content">
             <div id="no-results">Sonuç bulunamadı</div>
@@ -386,4 +479,4 @@ const html = `<!DOCTYPE html>
 </body>
 </html>`;
 
-fs.writeFileSync('C:/Users/ardam/.gemini/antigravity/scratch/linux-command-handbook.html', html);
+fs.writeFileSync('index.html', html);
